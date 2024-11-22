@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
@@ -57,7 +57,6 @@ const AudioPlayer = ({
 
   return (
     <div className="w-full max-w-md mx-auto bg-gray-800 text-white rounded-lg shadow-lg p-4">
-      {/* Podcast Info */}
       <div className="flex items-center gap-4 mb-4">
         <img
           src={podcastImage}
@@ -67,7 +66,6 @@ const AudioPlayer = ({
         <h3 className="text-lg font-bold">{titleEpisode}</h3>
       </div>
 
-      {/* Audio Player Controls */}
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={onBackwardEpisode}
@@ -89,7 +87,6 @@ const AudioPlayer = ({
         </button>
       </div>
 
-      {/* Progress Bar */}
       <div>
         <input
           type="range"
@@ -103,7 +100,6 @@ const AudioPlayer = ({
         </div>
       </div>
 
-      {/* Volume Control */}
       <div className="flex items-center justify-between mt-4">
         <FontAwesomeIcon icon={faVolumeLow} size="lg" />
         <input
@@ -118,7 +114,6 @@ const AudioPlayer = ({
         <FontAwesomeIcon icon={faCircleDown} size="lg" className="hover:text-blue-400 cursor-pointer" />
       </div>
 
-      {/* Hidden Audio Element */}
       <audio
         ref={audioRef}
         src={url}
@@ -129,7 +124,6 @@ const AudioPlayer = ({
   );
 };
 
-// Helper function to format time in mm:ss
 const formatTime = (time) => {
   if (!time || isNaN(time)) return "00:00";
   const minutes = Math.floor(time / 60);

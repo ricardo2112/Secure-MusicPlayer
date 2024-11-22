@@ -5,7 +5,19 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        black: '#131313',
+        white: '#E0E1D1',
+        secondary: '#141D26',
+        primary: '#233446',
+        contrast: '#36BEBB',
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+        fugaz: ['Fugaz One', 'cursive'],
+      },  
+    },
   },
   plugins: [],
 }
