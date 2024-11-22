@@ -6,7 +6,7 @@ import AudioPlayer from '../components/AudioPlayer';
 import portadaImage from '../assets/imgs/portadaExample.png';
 
 function MusicPlayer() {
-  const [selectedSection, setSelectedSection] = useState('MainContent');
+  const [selectedSection, setSelectedSection] = useState('MusicList');
 
   const audioUrl = "https://example.com/audio-file.mp3";
   const handleNextEpisode = () => console.log("Next episode clicked");
@@ -17,15 +17,17 @@ function MusicPlayer() {
     <div className="flex flex-col h-screen bg-secondary">
       <Header />
       <div className="flex flex-1 overflow-hidden">
-        <div className='flex flex-col w-1/4 bg-primary space-y-4'>
+        <div className='flex flex-col w-1/4 bg-primary'>
           <Sidebar onSectionChange ={setSelectedSection} />
-          <AudioPlayer
-            url={audioUrl}
-            onNextEpisode={handleNextEpisode}
-            onBackwardEpisode={handleBackwardEpisode}
-            titleEpisode={currentEpisodeTitle}
-            podcastImage={portadaImage} 
-          />
+          <div className="mt-auto">
+            <AudioPlayer
+              url={audioUrl}
+              onNextEpisode={handleNextEpisode}
+              onBackwardEpisode={handleBackwardEpisode}
+              titleEpisode={currentEpisodeTitle}
+              podcastImage={portadaImage}
+            />
+          </div>
         </div>
         <MainContent section={selectedSection} />
       </div>

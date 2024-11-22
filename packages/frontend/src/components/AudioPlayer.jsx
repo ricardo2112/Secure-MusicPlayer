@@ -1,12 +1,14 @@
-import React, { useRef, useState} from "react";
+import React, { useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
   faPause,
   faForwardStep,
   faBackwardStep,
-  faVolumeLow,
-  faCircleDown,
+  faVolumeUp,
+  faVolumeDown,
+  faBackward,
+  faForward,
 } from "@fortawesome/free-solid-svg-icons";
 
 const AudioPlayer = ({
@@ -55,18 +57,41 @@ const AudioPlayer = ({
     }
   };
 
+  const handleBackward5Seconds = () => {
+    const audio = audioRef.current;
+    const newTime = audio.currentTime - 5;
+    audio.currentTime = newTime > 0 ? newTime : 0;
+    setCurrentTime(audio.currentTime);
+    setProgress((audio.currentTime / audio.duration) * 100);
+  };
+
+  const handleForward5Seconds = () => {
+    const audio = audioRef.current;
+    const newTime = audio.currentTime + 5;
+    audio.currentTime = newTime < audio.duration ? newTime : audio.duration;
+    setCurrentTime(audio.currentTime);
+    setProgress((audio.currentTime / audio.duration) * 100);
+  };
+
   return (
-    <div className="w-full max-w-md mx-auto bg-gray-800 text-white rounded-lg shadow-lg p-4">
-      <div className="flex items-center gap-4 mb-4">
+    <div className="w-full max-w-md mx-auto bg-primary text-white rounded-lg shadow-lg p-3">
+      <h3 className="text-lg font-bold pb-2">{titleEpisode}</h3>
+      <div className="flex items-center gap-4 mb-4 justify-center">
         <img
           src={podcastImage}
           alt="Podcast Cover"
-          className="w-16 h-16 rounded-md"
+          className="rounded-md bg-center bg-cover w-40 h-auto"
+          style={{ backgroundImage: "cover" }}
         />
-        <h3 className="text-lg font-bold">{titleEpisode}</h3>
       </div>
 
       <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={handleBackward5Seconds}
+          className="text-white hover:text-blue-400"
+        >
+          <FontAwesomeIcon icon={faBackward} size="lg" />
+        </button>
         <button
           onClick={onBackwardEpisode}
           className="text-white hover:text-blue-400"
@@ -85,6 +110,12 @@ const AudioPlayer = ({
         >
           <FontAwesomeIcon icon={faForwardStep} size="lg" />
         </button>
+        <button
+          onClick={handleForward5Seconds}
+          className="text-white hover:text-blue-400"
+        >
+          <FontAwesomeIcon icon={faForward} size="lg" />
+        </button>
       </div>
 
       <div>
@@ -101,7 +132,7 @@ const AudioPlayer = ({
       </div>
 
       <div className="flex items-center justify-between mt-4">
-        <FontAwesomeIcon icon={faVolumeLow} size="lg" />
+        <FontAwesomeIcon icon={volume > 0.5 ? faVolumeUp : faVolumeDown} className="size-5" />
         <input
           type="range"
           value={volume}
@@ -109,9 +140,8 @@ const AudioPlayer = ({
           max="1"
           step="0.01"
           onChange={handleVolumeChange}
-          className="w-3/4 appearance-none bg-gray-600 rounded-lg h-1 focus:outline-none"
+          className="w-11/12  appearance-none bg-gray-600 rounded-lg h-1 focus:outline-none"
         />
-        <FontAwesomeIcon icon={faCircleDown} size="lg" className="hover:text-blue-400 cursor-pointer" />
       </div>
 
       <audio
