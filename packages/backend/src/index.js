@@ -5,12 +5,14 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import verifyToken from './middleware/auth.js';
 import User from './model/user.js';
+import cors from 'cors';
 import logout from './middleware/logout.js';
 
 import { PORT, SECRET_JWT_KEY} from './config/config.js';
 import { validateRegister, validateLogin } from './utils/validations.js';
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 connectToDatabase();
@@ -112,6 +114,8 @@ app.post('/logout', (req, res) => {
 app.get('/protected', verifyToken, (req, res) => {
     res.json({ message: `Hello, ${req.user.username}. You have access to this protected route!` });
 });
+
+app.use("/api", musicRoutes);
 
 // Iniciar servidor
 app.listen(PORT, () => {
