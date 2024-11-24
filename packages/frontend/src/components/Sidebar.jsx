@@ -5,7 +5,7 @@ const Sidebar = ({ onSectionChange }) => {
         { id: 1, label: 'Music List', component: 'MusicList' },
         { id: 2, label: 'Favoritas', component: 'Favoritas' },
         { id: 3, label: 'Playlists', component: 'Playlists' },
-        { id: 4, label: 'Comunidad', component: 'Comunidad' },
+        { id: 4, label: 'Community', component: 'Comunidad' },
     ];
   return (
     <div className='w-full bg-secondary text-white p-4 border-r border-contrast flex flex-col h-full'>
