@@ -17,10 +17,25 @@ export const fetchSongInfo = async (songId) => {
 // Obtener la URL de streaming de una canción
 export const fetchSongStream = async (songId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/tracks/${songId}/stream`);
-    return response.data.data;
+    const response = await axios.get(`${BASE_URL}/tracks/${songId}/stream`, {
+      maxRedirects: 0, // No sigas automáticamente las redirecciones
+      validateStatus: (status) => status >= 200 && status < 400, // Acepta códigos de redirección (3xx)
+    });
+
+    // Captura la cabecera "location" donde está la URL de redirección
+    const streamUrl = response.headers.location;
+    if (!streamUrl) {
+      throw new Error("Stream URL not found");
+    }
+
+    return streamUrl;
   } catch (error) {
-    console.error(`Error fetching song stream for ID: ${songId}`, error.message);
+    if (error.response && error.response.status === 302) {
+      // Si el estado es 302 Found, captura manualmente la redirección
+      return error.response.headers.location;
+    }
+
+    console.error("Error al obtener la URL de streaming:", error.message);
     throw new Error("Failed to fetch song stream URL");
   }
 };
