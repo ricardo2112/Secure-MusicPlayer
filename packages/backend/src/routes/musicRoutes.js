@@ -1,12 +1,12 @@
 import express from 'express';
-const express = require("express");
+import { getSongInfo, playSong } from '../controllers/musicController.js';
+
 const router = express.Router();
-const { getSongInfo, playSong } = require("../controllers/musicController");
 
 // Ruta para obtener información de una canción por ID
-router.get("/songs/:id", getSongInfo);
+router.get('/songs/:id', getSongInfo);
 
 // Ruta para obtener la URL de reproducción de una canción
-router.get("/songs/:id/play", playSong);
+router.get('/songs/:id/play', playSong);
 
-module.exports = router;
+export default router; // Exportar el router como módulo ES6
