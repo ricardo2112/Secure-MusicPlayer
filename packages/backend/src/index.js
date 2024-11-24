@@ -7,6 +7,7 @@ import verifyToken from './middleware/auth.js';
 import User from './model/user.js';
 import cors from 'cors';
 import logout from './middleware/logout.js';
+import musicRoutes from './routes/musicRoutes.js'
 
 import { PORT, SECRET_JWT_KEY} from './config/config.js';
 import { validateRegister, validateLogin } from './utils/validations.js';
