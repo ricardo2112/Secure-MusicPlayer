@@ -3,15 +3,21 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import MainContent from '../components/MainContent';
 import AudioPlayer from '../components/AudioPlayer';
-import portadaImage from '../assets/imgs/portadaExample.png';
 
 function MusicPlayer() {
   const [selectedSection, setSelectedSection] = useState('MusicList');
+  const [currentTrack, setCurrentTrack] = useState(null);
 
-  const audioUrl = "https://example.com/audio-file.mp3";
   const handleNextEpisode = () => console.log("Next episode clicked");
   const handleBackwardEpisode = () => console.log("Previous episode clicked");
-  const currentEpisodeTitle = "Título del Episodio Ejemplo";
+
+  const handleTrackSelect = (trackDetails) => {
+    setCurrentTrack({
+      url: trackDetails.stream_url || '',
+      title: trackDetails.title || 'Unknown Title',
+      artwork: trackDetails.artwork?.['480x480'] || 'https://via.placeholder.com/480'
+    });
+  };
 
   return (
     <div className="flex flex-col h-screen bg-secondary">
@@ -21,15 +27,18 @@ function MusicPlayer() {
           <Sidebar onSectionChange ={setSelectedSection} />
           <div className="mt-auto">
             <AudioPlayer
-              url={audioUrl}
-              onNextEpisode={handleNextEpisode}
-              onBackwardEpisode={handleBackwardEpisode}
-              titleEpisode={currentEpisodeTitle}
-              podcastImage={portadaImage}
-            />
+                url={currentTrack.url}
+                onNextEpisode={handleNextEpisode}
+                onBackwardEpisode={handleBackwardEpisode}
+                titleEpisode={currentTrack.title}
+                podcastImage={currentTrack.artwork}
+              />
           </div>
         </div>
         <MainContent section={selectedSection} />
+          {selectedSection === 'MusicList' && (
+            <MusicList onTrackSelect={handleTrackSelect} />
+          )}
       </div>
     </div>
   );
