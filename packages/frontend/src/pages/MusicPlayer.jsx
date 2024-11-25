@@ -36,6 +36,7 @@ function MusicPlayer() {
 
   return (
     <div className="flex flex-col h-screen bg-[#141D26]">
+      <Header />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex flex-col w-72 min-w-72 bg-[#141D26]">
           {/* Sidebar content */}

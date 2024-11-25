@@ -1,9 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const HomePage = ({ tab, setTab }) => {
   const { isAuthenticated, user, logout, loading } = useAuth();
+  const navigate = useNavigate();
+
+  console.log("isAuthenticated:", isAuthenticated);
+  console.log("loading:", loading);
+  console.log("user:", user);
 
   const handleLogout = async () => {
     await logout();
@@ -19,6 +24,9 @@ const HomePage = ({ tab, setTab }) => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
+      <div className="bg-blue-600 text-white p-4">
+        <h1 className="text-center text-xl font-bold">Music Application</h1>
+      </div>
       <h1 className="text-4xl font-bold">Bienvenido a la aplicación</h1>
 
       {!isAuthenticated ? (
@@ -38,18 +46,14 @@ const HomePage = ({ tab, setTab }) => {
           </p>
           <div className="flex space-x-4 mt-6">
             <button
-              onClick={() => setTab("player")}
-              className={`px-4 py-2 rounded ${
-                tab === "player" ? "bg-blue-800 text-white" : "bg-gray-300"
-              }`}
+              onClick={() => navigate("/musicplayer")}
+              className="px-4 py-2 rounded bg-blue-800 text-white"
             >
               Reproductor
             </button>
             <button
-              onClick={() => setTab("comunidad")}
-              className={`px-4 py-2 rounded ${
-                tab === "comunidad" ? "bg-blue-800 text-white" : "bg-gray-300"
-              }`}
+              onClick={() => navigate("/comunidad")}
+              className="px-4 py-2 rounded bg-blue-800 text-white"
             >
               Comunidad
             </button>

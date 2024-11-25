@@ -25,9 +25,7 @@ function App() {
         <PlaylistsProvider>
           <BrowserRouter>
             <div className="h-screen flex flex-col">
-              <div className="bg-blue-600 text-white p-4">
-                <h1 className="text-center text-xl font-bold">Music Application</h1>
-              </div>
+              
 
               <div className="flex-1">
                 <Routes>
