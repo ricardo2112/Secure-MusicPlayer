@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const HomePage = ({ tab, setTab }) => {
+const HomePage = () => {
   const { isAuthenticated, user, logout, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -42,7 +42,7 @@ const HomePage = ({ tab, setTab }) => {
       ) : (
         <>
           <p className="mt-4 text-lg">
-            ¡Hola, <strong>{user.username}</strong>! Bienvenido de nuevo.
+            ¡Hola, <strong>{user.username || 'Usuario'}</strong>! Bienvenido de nuevo.
           </p>
           <div className="flex space-x-4 mt-6">
             <button

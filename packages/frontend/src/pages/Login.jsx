@@ -17,7 +17,10 @@ const Login = () => {
     try {
       const { accessToken, refreshToken, user } = await loginUser(username, password);
       await login(accessToken, refreshToken, user);
-      navigate("/"); // Redirige a la página de inicio (HomePage) tras el login
+      setTimeout(()=> {
+        navigate("/"); 
+      }, 1000);
+      navigate("/"); 
     } catch (err) {
       setError(err.message);
     }

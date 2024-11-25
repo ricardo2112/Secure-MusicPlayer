@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Function to fetch trending tracks from Audius API
 export const fetchTrendingTracksData = async () => {
     try {
         const response = await axios.get('https://discoveryprovider.audius.co/v1/tracks/trending');
@@ -11,7 +10,6 @@ export const fetchTrendingTracksData = async () => {
     }
 };
 
-// Function to fetch relaxing tracks (using a sample tag or filter for relaxation)
 export const fetchRelaxingTracksData = async () => {
     const genres = ['chill', 'ambient', 'acoustic', 'classical', 'jazz', 'lo-fi', 'soul'];
     const randomGenre = genres[Math.floor(Math.random() * genres.length)];
@@ -23,8 +21,7 @@ export const fetchRelaxingTracksData = async () => {
         throw error;
     }
 };
-
-// Function to fetch track details by track ID
+ 
 export const fetchTrackDetails = async (trackId) => {
     try {
         const response = await axios.get(`https://discoveryprovider.audius.co/v1/tracks/${trackId}`);

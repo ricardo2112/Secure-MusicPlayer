@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkTokens = async () => {
+      setLoading(true);
       const tokens = await getTokens();
       if (tokens) {
         const currentTime = new Date().getTime();
@@ -52,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     await storeTokens(accessToken, refreshToken);
     setIsAuthenticated(true);
     setUser(userData);
+    setLoading(false);
   };
 
   const logout = async () => {
