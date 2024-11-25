@@ -43,17 +43,17 @@ app.post('/login', async (req, res) => {
         }
 
         // Generar un token JWT
-        const token = jwt.sign(
+        const accessToken = jwt.sign(
             { userId: user._id, username: user.user }, // Payload
             SECRET_JWT_KEY, // Llave secreta
             { expiresIn: '1h' } // Configuración del token
         );
 
         // Opcional: Configurar una cookie segura con el token
-        res.cookie('token', token, { httpOnly: true, maxAge: 3600000 }); // 1 hora
+        res.cookie('token', accessToken, { httpOnly: true, maxAge: 3600000 }); // 1 hora
 
         // Responder con el token o mensaje de éxito
-        res.status(200).json({ message: "Login successful", token });
+        res.status(200).json({ message: "Login successful", accessToken, refreshToken: "dummyRefreshToken"});
     } catch (error) {
         console.error('Error in /login:', error.message);
         res.status(400).json({ error: error.message });
@@ -115,6 +115,22 @@ app.post('/logout', (req, res) => {
 app.get('/protected', verifyToken, (req, res) => {
     res.json({ message: `Hello, ${req.user.username}. You have access to this protected route!` });
 });
+
+// Ruta para verificación de tokens
+// Endpoint para verificar el token y obtener los datos del usuario autenticado
+app.get('/verify-token', verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select('-password'); // Busca al usuario por ID y excluye la contraseña
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        res.status(200).json({ username: user.user }); // Devuelve el username
+    } catch (error) {
+        console.error("Error in /verify-token:", error.message);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
 
 app.use("/api", musicRoutes);
 
