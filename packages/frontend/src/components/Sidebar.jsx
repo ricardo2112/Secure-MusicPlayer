@@ -8,13 +8,13 @@ const Sidebar = ({ onSectionChange }) => {
         { id: 4, label: 'Community', component: 'Comunidad' },
     ];
   return (
-    <div className='w-full bg-secondary text-white p-4 border-r border-contrast flex flex-col h-full'>
+    <div className='w-full bg-secondary text-white p-4 border-r border-contrast flex flex-col'>
         <nav className="flex flex-col gap-2">
             {menuItems.map((item) => (
                 <button
                     key={item.id}
                     onClick={() => onSectionChange(item.component)}
-                    className='w-full text-left py-2 px-4 hover:bg-primary rounded-lg mb-1'
+                    className='w-full text-left py-2 px-4 hover:bg-primary rounded-lg'
                 >{item.label}
                 </button>
             ))}

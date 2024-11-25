@@ -4,26 +4,35 @@ import Sidebar from '../components/Sidebar';
 import MainContent from '../components/MainContent';
 import Community from '../components/Community';
 import AudioPlayer from '../components/AudioPlayer';
-import portadaImage from '../assets/imgs/portadaExample.png';
+import MusicList from '../components/MusicList'; // Asegúrate de que este componente esté importado
 
-function MusicPlayer({ onSectionChange }) {
+function MusicPlayer() {
   const [selectedSection, setSelectedSection] = useState('MainContent');
+  const [currentTrack, setCurrentTrack] = useState(null);
 
   const handleSectionChange = (section) => {
     setSelectedSection(section);
   };
 
+  const handleNextEpisode = () => console.log("Next episode clicked");
+  const handleBackwardEpisode = () => console.log("Previous episode clicked");
+
+  const handleTrackSelect = (trackDetails) => {
+    setCurrentTrack({
+      url: trackDetails.stream_url || '',
+      title: trackDetails.title || 'Unknown Title',
+      artwork: trackDetails.artwork?.['480x480'] || 'https://via.placeholder.com/480'
+    });
+  };
+
   const renderMainContent = () => {
     if (selectedSection === 'Comunidad') {
       return <Community />;
+    } else if (selectedSection === 'MusicList') {
+      return <MusicList onTrackSelect={handleTrackSelect} />;
     }
     return <MainContent section={selectedSection} />;
   };
-
-  const audioUrl = "https://example.com/audio-file.mp3";
-  const handleNextEpisode = () => console.log("Next episode clicked");
-  const handleBackwardEpisode = () => console.log("Previous episode clicked");
-  const currentEpisodeTitle = "Example Episode Title";
 
   return (
     <div className="flex flex-col h-screen bg-[#141D26]">
@@ -33,22 +42,22 @@ function MusicPlayer({ onSectionChange }) {
           <div className="flex-grow overflow-y-auto">
             <Sidebar onSectionChange={handleSectionChange} />
           </div>
-          
+
           {/* Audio Player fixed at bottom */}
           <div className="flex-shrink-0">
             <AudioPlayer
-              url={audioUrl}
+              url={currentTrack?.url || 'https://example.com/audio-file.mp3'}
               onNextEpisode={handleNextEpisode}
               onBackwardEpisode={handleBackwardEpisode}
-              titleEpisode={currentEpisodeTitle}
-              podcastImage={portadaImage}
+              titleEpisode={currentTrack?.title || 'Example Episode Title'}
+              podcastImage={currentTrack?.artwork || 'https://via.placeholder.com/480'}
             />
           </div>
         </div>
 
         {/* Main content area */}
         <div className="flex-1 bg-[#141D26] overflow-hidden">
-        <div className="h-full overflow-hidden px-6 py-4">
+          <div className="h-full overflow-hidden px-6 py-4">
             {renderMainContent()}
           </div>
         </div>
