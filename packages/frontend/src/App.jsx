@@ -14,73 +14,39 @@ const ProtectedRoute = ({ element }) => {
   return isAuthenticated ? element : <Navigate to="/" />;
 };
 
-const AppContent = () => {
-  const [tab, setTab] = useState("player");
-  const { isAuthenticated } = useAuth(); // Ahora seguro porque AppContent está envuelto por AuthProvider
-
-  return (
-    <div className="h-screen flex flex-col">
-      {/* Navegación global */}
-      {isAuthenticated && (
-        <div className="bg-blue-600 text-white flex justify-around p-4">
-          <button
-            onClick={() => setTab("player")}
-            className={`px-4 py-2 rounded ${
-              tab === "player" ? "bg-blue-800" : "bg-blue-500"
-            }`}
-          >
-            Reproductor
-          </button>
-          <button
-            onClick={() => setTab("comunidad")}
-            className={`px-4 py-2 rounded ${
-              tab === "comunidad" ? "bg-blue-800" : "bg-blue-500"
-            }`}
-          >
-            Comunidad
-          </button>
-        </div>
-      )}
-
-      {/* Rutas y contenido dinámico */}
-      <div className="flex-1">
-        <Routes>
-          {/* Ruta de inicio: Siempre muestra HomePage */}
-          <Route path="/" element={<HomePage />} />
-
-          {/* Rutas públicas */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-
-          {/* Rutas protegidas */}
-          <Route
-            path="/musicplayer"
-            element={
-              <ProtectedRoute
-                element={
-                  tab === "player" ? (
-                    <MusicPlayer />
-                  ) : (
-                    <Comunidad />
-                  )
-                }
-              />
-            }
-          />
-
-          {/* Ruta para páginas no encontradas */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </div>
-    </div>
-  );
-};
-
 function App() {
+  const [tab, setTab] = useState("player");
+
   return (
     <AuthProvider>
       <BrowserRouter>
-        <AppContent />
+        <div className="h-screen flex flex-col">
+          <div className="flex-1">
+            <Routes>
+              {/* Ruta principal */}
+              <Route path="/" element={<HomePage tab={tab} setTab={setTab} />} />
+
+              {/* Rutas públicas */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+
+              {/* Rutas protegidas */}
+              <Route
+                path="/musicplayer"
+                element={
+                  <ProtectedRoute
+                    element={
+                      tab === "player" ? <MusicPlayer /> : <Comunidad />
+                    }
+                  />
+                }
+              />
+
+              {/* Ruta para páginas no encontradas */}
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </div>
+        </div>
       </BrowserRouter>
     </AuthProvider>
   );

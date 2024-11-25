@@ -3,6 +3,7 @@ import { SECRET_JWT_KEY } from '../config/config.js'; // Importa tu clave secret
 
 const verifyToken = (req, res, next) => {
     const token = req.cookies.token || req.headers['authorization']?.split(' ')[1]; // Token desde cookie o header
+    console.log("Token recibido:", token);
 
     if (!token) {
         return res.status(401).json({ error: "Access denied. No token provided." });
