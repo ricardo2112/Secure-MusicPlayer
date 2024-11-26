@@ -8,63 +8,57 @@ const HomePage = () => {
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      navigate("/login"); // Redirige si no está autenticado
+      navigate("/login");
     }
   }, [loading, isAuthenticated, navigate]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <p>Cargando...</p>
+      <div className="flex items-center justify-center h-screen bg-secondary text-white text-xl">
+        Cargando...
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <div className="bg-blue-600 text-white p-4">
-        <h1 className="text-center text-xl font-bold">Music Application</h1>
-      </div>
-      <h1 className="text-4xl font-bold">Bienvenido a la aplicación</h1>
-
-      {!isAuthenticated ? (
-        <>
-          <p className="mt-4 text-lg">Por favor, inicia sesión para continuar.</p>
-          <Link
-            to="/login"
-            className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800"
-          >
-            Iniciar Sesión
-          </Link>
-        </>
-      ) : (
-        <>
-          <p className="mt-4 text-lg">
-            ¡Hola, <strong>{user.username || 'Usuario'}</strong>! Bienvenido de nuevo.
-            {/*¡Hola, <strong>{user?.username}</strong>! Bienvenido de nuevo. */}
-          </p>
-          <div className="flex space-x-4 mt-6">
+    <div className="flex items-center justify-center h-screen bg-secondary text-white">
+      <div className="max-w-lg p-6 rounded-lg bg-primary shadow-lg text-center">
+        <h1 className="text-4xl text-white mb-4 font-fugaz">
+          Bienvenido a Music Vibes
+        </h1>
+        <p className="text-lg text-white mb-6">
+          Descubre tus canciones favoritas, explora comunidades y lleva tu
+          música donde quieras.
+        </p>
+        {!isAuthenticated ? (
+          <div className="flex flex-col gap-4">
+            <Link
+              to="/login"
+              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast transition"
+            >
+              Iniciar Sesión
+            </Link>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <p className="text-lg text-white mb-4">
+              ¡Hola, <strong>{user?.username || "Usuario"}</strong>! 🎵
+            </p>
             <button
               onClick={() => navigate("/musicplayer")}
-              className="px-4 py-2 rounded bg-blue-800 text-white"
+              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition"
             >
-              Reproductor
+              Ir al Reproductor
             </button>
             <button
-              onClick={() => navigate("/comunidad")}
-              className="px-4 py-2 rounded bg-blue-800 text-white"
+              onClick={logout}
+              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition"
             >
-              Comunidad
+              Cerrar Sesión
             </button>
           </div>
-          <button
-            onClick={logout}
-            className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-800"
-          >
-            Cerrar Sesión
-          </button>
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
 };
