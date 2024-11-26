@@ -1,9 +1,11 @@
 import axios from 'axios';
 
+const BACKEND_API_URL = 'http://localhost:3000';
+
 export const fetchTrendingTracksData = async () => {
     try {
-        const response = await axios.get('https://discoveryprovider.audius.co/v1/tracks/trending');
-        return response;
+        const response = await axios.get(`${BACKEND_API_URL}/trending`);
+        return response.data;
     } catch (error) {
         console.error('Error fetching trending tracks:', error);
         throw error;
