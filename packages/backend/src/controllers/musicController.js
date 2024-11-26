@@ -2,8 +2,8 @@ import { fetchSongInfo, fetchSongStream, fetchTrendingSongs, fetchRelaxSongs} fr
 // Obtener información de una canción
 
 export const getSongInfo = async (req, res) => {
-  try {
     const { id } = req.params;
+  try {
     const songInfo = await fetchSongInfo(id);
     res.status(200).json(songInfo);
   } catch (error) {
@@ -14,8 +14,8 @@ export const getSongInfo = async (req, res) => {
 
 // Obtener la URL para reproducir una canción
 export const playSong = async (req, res) => {
-  try {
     const { id } = req.params; // Obtén el ID de la canción desde los parámetros
+  try {
     const songStreamURL = await fetchSongStream(id); // Llama al servicio para obtener la URL final
     if (!songStreamURL) {
       return res.status(404).json({ error: "Stream URL not found" });

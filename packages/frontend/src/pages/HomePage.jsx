@@ -1,43 +1,34 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const HomePage = () => {
-  const { isAuthenticated, user, logout, loading } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      navigate("/login");
-    }
-  }, [loading, isAuthenticated, navigate]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-secondary text-white text-xl">
-        Cargando...
-      </div>
-    );
-  }
-
   return (
-    <div className="flex items-center justify-center h-screen bg-secondary text-white">
-      <div className="max-w-lg p-6 rounded-lg bg-primary shadow-lg text-center">
+    <div className="flex flex-col items-center justify-center h-screen bg-secondary text-white">
+      <div className="max-w-lg p-8 rounded-lg bg-primary shadow-xl text-center">
         <h1 className="text-4xl text-white mb-4 font-fugaz">
           Bienvenido a Music Vibes
         </h1>
         <p className="text-lg text-white mb-6">
-          Descubre tus canciones favoritas, explora comunidades y lleva tu
-          música donde quieras.
+          Descubre tus canciones favoritas, explora comunidades y lleva tu música donde quieras.
         </p>
         {!isAuthenticated ? (
           <div className="flex flex-col gap-4">
-            <Link
-              to="/login"
-              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast transition"
+            <button
+              onClick={() => navigate("/login")}
+              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition"
             >
               Iniciar Sesión
-            </Link>
+            </button>
+            <button
+              onClick={() => navigate("/register")}
+              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition"
+            >
+              Regístrate
+            </button>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
