@@ -1,6 +1,5 @@
-// ../context/PlaylistsContext.jsx
 import React, { createContext, useContext, useState } from "react";
-import axios from "axios";
+import { fetchTrendingSongs, fetchSongStream } from "../services/data";
 
 const PlaylistsContext = createContext();
 
@@ -10,6 +9,8 @@ export const PlaylistsProvider = ({ children }) => {
     { id: 2, title: "Playlist 2", description: "Description 2", cover: "", songs: [] },
     { id: 3, title: "Playlist 3", description: "Description 3", cover: "", songs: [] },
   ]);
+
+  const [currentSong, setCurrentSong] = useState(null);
 
   const addPlaylist = (newPlaylist) => {
     setPlaylists([...playlists, newPlaylist]);
@@ -25,29 +26,27 @@ export const PlaylistsProvider = ({ children }) => {
     setPlaylists(playlists.filter((playlist) => playlist.id !== id));
   };
 
-// En PlaylistsContext.jsx o el archivo donde esté definida la función
-    const loadSongsForPlaylist = async (playlistId) => {
-        try {
-        // Usar una playlist fija o mapearla al ID si está en el estado
-        const response = await axios.get(
-            "https://discoveryprovider.audius.co/v1/tracks/trending"
-        );
-        const songs = response.data.data.map((track) => ({
+  const loadSongsForPlaylist = async (playlistId) => {
+    try {
+      const trendingSongs = await fetchTrendingSongs();
+      const songs = await Promise.all(
+        trendingSongs.map(async (track) => {
+          const streamUrl = await fetchSongStream(track.id);
+          return {
             id: track.id,
             title: track.title,
             artist: track.user.name,
-            artwork: track.artwork["150x150"], // Puedes ajustar esto
-            streamUrl: `https://discoveryprovider.audius.co/v1/tracks/${track.id}/stream`,
-        }));
-        return songs;
-        } catch (error) {
-        console.error("Error al cargar canciones:", error);
-        return [];
-        }
-    };
-
-    
-  
+            artwork: track.artwork["150x150"],
+            streamUrl,
+          };
+        })
+      );
+      return songs;
+    } catch (error) {
+      console.error("Error al cargar canciones desde el backend:", error.message);
+      return [];
+    }
+  };
 
   return (
     <PlaylistsContext.Provider
@@ -57,6 +56,8 @@ export const PlaylistsProvider = ({ children }) => {
         updatePlaylist,
         removePlaylist,
         loadSongsForPlaylist,
+        currentSong,
+        setCurrentSong,
       }}
     >
       {children}
@@ -64,6 +65,4 @@ export const PlaylistsProvider = ({ children }) => {
   );
 };
 
-export const usePlaylists = () => {
-  return useContext(PlaylistsContext);
-};
+export const usePlaylists = () => useContext(PlaylistsContext);
