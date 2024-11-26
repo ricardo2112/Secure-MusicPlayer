@@ -9,7 +9,6 @@ import bcrypt from "bcrypt";
 import User from "./model/user.js";
 import { PORT, SECRET_JWT_KEY } from "./config/config.js";
 import { validateRegister, validateLogin } from "./utils/validations.js";
-import { v4 as uuidv4 } from "uuid"; // importa el paquete uuid
 
 const app = express();
 const server = http.createServer(app);
@@ -81,15 +80,20 @@ app.post("/login", async (req, res) => {
 
     res.cookie("token", accessToken, { httpOnly: true, maxAge: 3600000 });
 
-    res.status(200).json({
-      message: "Login successful",
-      accessToken,
-      user: { id: user._id, username: user.user },
-    });
-  } catch (error) {
-    console.error("Error in /login:", error.message);
-    res.status(400).json({ error: error.message });
-  }
+        // Responder con el token o mensaje de éxito
+        res.status(200).json({
+            message: "Login successful",
+            accessToken,
+            refreshToken: "dummyRefreshToken",
+            user: {
+                id: user._id,
+                username: user.user,
+            },
+        });
+    } catch (error) {
+        console.error('Error in /login:', error.message);
+        res.status(400).json({ error: error.message });
+    }
 });
 
 app.post("/register", async (req, res) => {

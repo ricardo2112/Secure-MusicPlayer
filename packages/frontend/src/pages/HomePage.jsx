@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -6,13 +6,11 @@ const HomePage = () => {
   const { isAuthenticated, user, logout, loading } = useAuth();
   const navigate = useNavigate();
 
-  console.log("isAuthenticated:", isAuthenticated);
-  console.log("loading:", loading);
-  console.log("user:", user);
-
-  const handleLogout = async () => {
-    await logout();
-  };
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate("/login"); // Redirige si no está autenticado
+    }
+  }, [loading, isAuthenticated, navigate]);
 
   if (loading) {
     return (
@@ -43,6 +41,7 @@ const HomePage = () => {
         <>
           <p className="mt-4 text-lg">
             ¡Hola, <strong>{user.username || 'Usuario'}</strong>! Bienvenido de nuevo.
+            {/*¡Hola, <strong>{user?.username}</strong>! Bienvenido de nuevo. */}
           </p>
           <div className="flex space-x-4 mt-6">
             <button
@@ -59,7 +58,7 @@ const HomePage = () => {
             </button>
           </div>
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-800"
           >
             Cerrar Sesión
