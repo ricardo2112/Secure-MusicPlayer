@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "./model/user.js";
 import { PORT, SECRET_JWT_KEY } from "./config/config.js";
+import musicRoutes from './routes/musicRoutes.js'
 import { validateRegister, validateLogin } from "./utils/validations.js";
 
 const app = express();
@@ -126,6 +127,8 @@ app.post("/register", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
+
+app.use("/api", musicRoutes);
 
 // --- Iniciar el servidor ---
 server.listen(PORT, () => {
