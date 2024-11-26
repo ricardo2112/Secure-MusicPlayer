@@ -1,6 +1,13 @@
 import React from "react";
+import { usePlaylists } from "../context/PlaylistsContext";
 
-const PlaylistDetail = ({ playlist, songs, onClose, onPlaySong, onRemoveSong }) => {
+const PlaylistDetail = ({ playlist, songs, onClose, onRemoveSong }) => {
+  const { setCurrentSong } = usePlaylists();
+
+  const handlePlaySong = (streamUrl, title, artwork) => {
+    setCurrentSong({ url: streamUrl, title, artwork });
+  };
+
   if (!playlist) {
     return <div className="text-white">The selected playlist was not found.</div>;
   }
@@ -57,7 +64,7 @@ const PlaylistDetail = ({ playlist, songs, onClose, onPlaySong, onRemoveSong }) 
               </div>
               <div className="flex items-center gap-4">
                 <button
-                  onClick={() => onPlaySong(song.streamUrl, song.title, song.artwork)}
+                  onClick={() => handlePlaySong(song.streamUrl, song.title, song.artwork)}
                   className="text-blue-400 hover:underline"
                 >
                   Reproducir

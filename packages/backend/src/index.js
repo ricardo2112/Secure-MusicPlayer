@@ -9,7 +9,6 @@ import bcrypt from "bcrypt";
 import User from "./model/user.js";
 import { PORT, SECRET_JWT_KEY } from "./config/config.js";
 import { validateRegister, validateLogin } from "./utils/validations.js";
-import { v4 as uuidv4 } from "uuid"; // importa el paquete uuid
 
 const app = express();
 const server = http.createServer(app);
