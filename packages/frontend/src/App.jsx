@@ -11,7 +11,14 @@ import { ChatProvider } from "./context/ChatContext";
 import { PlaylistsProvider } from "./context/PlaylistsContext";
 
 const ProtectedRoute = ({ element }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center bg-[#141D26] text-white">
+        Cargando...
+      </div>
+    );
+  }
   return isAuthenticated ? element : <Navigate to="/login" />;
 };
 
@@ -22,8 +29,6 @@ function App() {
       <ChatProvider>
         <PlaylistsProvider>
           <BrowserRouter>
-            <div className="h-screen flex flex-col">
-              <div className="flex-1">
                 <Routes>
                   {/* Ruta principal */}
                   <Route path="/" element={<HomePage />} />
@@ -39,8 +44,6 @@ function App() {
                   {/* Ruta para páginas no encontradas */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </div>
-            </div>
           </BrowserRouter>
         </PlaylistsProvider>
       </ChatProvider>

@@ -1,58 +1,56 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const HomePage = () => {
-  const { isAuthenticated, user, logout, loading } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      navigate("/login");
-    }
-  }, [loading, isAuthenticated, navigate]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-secondary text-white text-xl">
-        Cargando...
-      </div>
-    );
-  }
-
   return (
-    <div className="flex items-center justify-center h-screen bg-secondary text-white">
-      <div className="max-w-lg p-6 rounded-lg bg-primary shadow-lg text-center">
-        <h1 className="text-4xl text-white mb-4 font-fugaz">
-          Bienvenido a Music Vibes
+    <div className="flex flex-col items-center justify-center min-h-screen bg-secondary text-white px-4">
+      <div className="w-full max-w-3xl p-6 md:p-10 bg-primary rounded-lg shadow-2xl text-center">
+        <h1
+          className="text-white font-fugaz text-5xl mb-6"
+        >
+          Bienvenido a <span className="text-contrast2">Music Vibes</span>
         </h1>
-        <p className="text-lg text-white mb-6">
+        <p
+          className="text-white mb-8 font-poppins text-xl"
+        >
           Descubre tus canciones favoritas, explora comunidades y lleva tu
           música donde quieras.
         </p>
         {!isAuthenticated ? (
-          <div className="flex flex-col gap-4">
-            <Link
-              to="/login"
-              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast transition"
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => navigate("/login")}
+              className="w-full sm:w-auto px-6 py-3 text-base sm:text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition-transform transform hover:scale-105"
             >
               Iniciar Sesión
-            </Link>
+            </button>
+            <button
+              onClick={() => navigate("/register")}
+              className="w-full sm:w-auto px-6 py-3 text-base sm:text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition-transform transform hover:scale-105"
+            >
+              Regístrate
+            </button>
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
-            <p className="text-lg text-white mb-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <p
+              className="text-white mb-4 sm:mb-0 font-poppins text-lg"
+            >
               ¡Hola, <strong>{user?.username || "Usuario"}</strong>! 🎵
             </p>
             <button
               onClick={() => navigate("/musicplayer")}
-              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition"
+              className="w-full sm:w-auto px-6 py-3 text-base sm:text-lg font-semibold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition-transform transform hover:scale-105"
             >
               Ir al Reproductor
             </button>
             <button
               onClick={logout}
-              className="px-6 py-3 text-lg font-bold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition"
+              className="w-full sm:w-auto px-6 py-3 text-base sm:text-lg font-semibold text-white bg-contrast2 rounded-lg hover:bg-white hover:text-contrast2 transition-transform transform hover:scale-105"
             >
               Cerrar Sesión
             </button>
