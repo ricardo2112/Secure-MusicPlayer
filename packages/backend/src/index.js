@@ -1,4 +1,5 @@
 import express from "express";
+import verifyToken from './middleware/auth.js';
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
@@ -8,9 +9,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "./model/user.js";
 import playlistRoutes from './routes/playlistRoutes.js';
-import { PORT, SECRET_JWT_KEY } from "./config/config.js";
 import musicRoutes from './routes/musicRoutes.js'
 import { validateRegister, validateLogin } from "./utils/validations.js";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
@@ -26,6 +29,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 connectToDatabase();
+
+const PORT = process.env.PORT;
+const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY;
 
 const socketToUser = new Map();
 
@@ -56,8 +62,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// --- Rutas de Express ---
-// Login
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -163,7 +167,6 @@ app.get("/", (req, res) => {
 
 // Rutas adicionales
 app.use("/api", musicRoutes);
-
 app.use("/mymusic", playlistRoutes);
 
 // --- Iniciar el servidor ---
