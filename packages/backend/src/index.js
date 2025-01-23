@@ -1,4 +1,3 @@
-import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
@@ -12,6 +11,11 @@ import { PORT, SECRET_JWT_KEY } from "./config/config.js";
 import musicRoutes from './routes/musicRoutes.js';
 import { validateRegister, validateLogin } from "./utils/validations.js";
 import handleChatMessage from "./controllers/chatController.js"; // Importar el controlador de chat
+import app from "./server.js"; // Configuración de Express
+import initializeSocket from "./socket.js"; // WebSocket
+import dotenv from "dotenv";
+
+dotenv.config(); // Cargar variables de entorno
 
 const app = express();
 const server = http.createServer(app);
@@ -91,9 +95,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Register
-app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+const PORT = process.env.PORT || 3000;
 
   try {
     validateRegister({ username, password });
@@ -159,7 +161,14 @@ app.get("/", (req, res) => {
 app.use("/api", musicRoutes);
 app.use("/mymusic", playlistRoutes);
 
-// --- Iniciar el servidor ---
+// Crear servidor HTTP
+const server = http.createServer(app);
+
+// Inicializar WebSocket
+initializeSocket(server);
+
+
+// Iniciar servidor
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

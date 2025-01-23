@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:3000";
+export const API_URL = "http://localhost:3000/auth";
 
 export const loginUser = async (username, password) => {
   const response = await fetch(`${API_URL}/login`, {
