@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken';
-import { SECRET_JWT_KEY } from '../config/config.js'; // Importa tu clave secreta desde la configuración
+import dotenv from 'dotenv';
+dotenv.config(); // Carga las variables de entorno desde el archivo .env
+
+const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY;
 
 const verifyToken = (req, res, next) => {
     const token = req.cookies.token || req.headers['authorization']?.split(' ')[1]; // Token desde cookie o header
