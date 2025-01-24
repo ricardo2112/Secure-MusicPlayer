@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config(); // Cargar variables de entorno
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // Validar variables de entorno críticas
 if (!process.env.MONGO_URI || !process.env.SECRET_JWT_KEY) {
