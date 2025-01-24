@@ -23,17 +23,25 @@ const Subscription = () => {
 
   useEffect(() => {
     const fetchSubscription = async () => {
+      const token = localStorage.getItem("accessToken");
+      console.log("Token enviado:", token); // Verifica el token
+  
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/subscriptions/get-subscription`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        });
-
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/subscriptions/get-subscription`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
         const result = await response.json();
         if (response.ok) {
           setSubscription(result.subscription);
+        } else {
+          console.error("Error al obtener la suscripción:", result.error);
         }
       } catch (error) {
         console.error("Error al obtener la suscripción:", error);
@@ -41,9 +49,10 @@ const Subscription = () => {
         setLoading(false);
       }
     };
-
+  
     fetchSubscription();
   }, []);
+  
 
   const handleApprove = async (data, actions) => {
     try {
