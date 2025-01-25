@@ -1,4 +1,5 @@
 import xss from "xss";
+const xss = require("xss");
 
 /**
  * Maneja los mensajes de chat, sanitizando y validando los datos.
