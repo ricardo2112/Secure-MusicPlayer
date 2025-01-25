@@ -24,7 +24,7 @@ const Subscription = () => {
   useEffect(() => {
     const fetchSubscription = async () => {
       const token = localStorage.getItem("accessToken");
-      console.log("Token enviado:", token); // Verifica el token
+      console.log("Token enviado"); // Verifica el token
   
       try {
         const response = await fetch(

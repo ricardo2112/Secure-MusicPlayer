@@ -13,16 +13,15 @@ const initializeSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    console.log(`User connected`);
 
     // Manejar datos del usuario
     socket.on("setUserData", (userData) => {
       if (!userData || typeof userData.username !== "string" || userData.username.length > 50) {
-        console.log(`Invalid userData received from ${socket.id}`);
+        console.log(`Invalid userData received`);
         return;
       }
       socketToUser.set(socket.id, { username: userData.username });
-      console.log(`User data set for socket ${socket.id}:`, socketToUser.get(socket.id));
     });
 
     // Manejar mensajes de chat
@@ -34,7 +33,7 @@ const initializeSocket = (server) => {
 
       // Validar longitud del mensaje
       if (!sanitizedMessage || sanitizedMessage.length > 200) {
-        console.log(`Invalid message received from ${socket.id}`);
+        console.log(`Invalid message received`);
         socket.emit("errorMessage", "Message is invalid or too long.");
         return;
       }
@@ -53,7 +52,7 @@ const initializeSocket = (server) => {
     // Manejar desconexión
     socket.on("disconnect", () => {
       socketToUser.delete(socket.id);
-      console.log(`User disconnected: ${socket.id}`);
+      console.log(`User disconnected`);
     });
   });
 
