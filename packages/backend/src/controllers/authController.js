@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../model/user.js";
 import { validateRegister, validateLogin } from "../utils/validations.js";
+import { sanitizeInput } from "../utils/sanitization.js";
 
 dotenv.config();
 const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY;
@@ -10,7 +11,8 @@ const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
 
 // Login
 export const login = async (req, res) => {
-  const { username, password } = req.body;
+  const username = sanitizeInput(req.body.username);  // Sanitiza solo el username
+  const password = sanitizeInput(req.body.password);  // Sanitiza solo el password
 
   try {
     validateLogin({ username, password });
@@ -32,15 +34,14 @@ export const login = async (req, res) => {
       REFRESH_TOKEN_KEY,
       { expiresIn: "7d" }
     );
-    
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Solo en HTTPS en producción
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Guarda el refreshToken en la base de datos
     user.refreshToken = refreshToken;
     await user.save();
 
@@ -56,9 +57,9 @@ export const login = async (req, res) => {
   }
 };
 
-// Register
 export const register = async (req, res) => {
-  const { username, password } = req.body;
+  const username = sanitizeInput(req.body.username);  // Sanitiza solo el username
+  const password = sanitizeInput(req.body.password);  // Sanitiza solo el password
 
   try {
     validateRegister({ username, password });
@@ -77,6 +78,8 @@ export const register = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+
 
 // Verify Token
 export const verifyToken = async (req, res) => {
@@ -107,7 +110,7 @@ export const refreshAccessToken = async (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(refreshToken, SECRET_JWT_KEY);
+    const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_KEY);
     const user = await User.findById(decoded.userId);
 
     if (!user || user.refreshToken !== refreshToken) {

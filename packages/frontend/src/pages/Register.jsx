@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../utils/api";
+import { sanitizeInput } from "../utils/sanitization";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -9,9 +10,13 @@ const Register = () => {
   const [error, setError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  // Validación de la contraseña
   const validatePassword = (password) => {
-    if (password.length < 6) {
-      setPasswordError("La contraseña debe tener al menos 6 caracteres.");
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      setPasswordError(
+        "La contraseña debe tener al menos 6 caracteres, incluyendo una letra, un número y un carácter especial."
+      );
       return false;
     }
     setPasswordError("");
@@ -21,12 +26,18 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Sanitiza el nombre de usuario
+    const sanitizedUsername = sanitizeInput(username);
+
+    // No sanitices la contraseña
+    const sanitizedPassword = password; // La contraseña no debe ser sanitizada
+
     if (!validatePassword(password)) {
       return;
     }
 
     try {
-      await registerUser(username, password);
+      await registerUser(sanitizedUsername, sanitizedPassword);
       navigate("/login");
     } catch (err) {
       setError(err.message);

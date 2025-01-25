@@ -3,8 +3,11 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectToDatabase from "./config/mongodb.js";
 import routes from "./routes/index.js";
+import sanitizeMiddleware from "./middleware/sanitizeMiddleware.js";
 
 const app = express();
+app.use(express.json()); // Sólo una vez está bien
+app.use(sanitizeMiddleware); // Aplicar middleware global
 
 // Configurar CORS dinámico
 app.use(
@@ -15,8 +18,7 @@ app.use(
 );
 
 // Middlewares globales
-app.use(express.json());
-app.use(cookieParser());
+app.use(cookieParser()); // Sólo esta línea
 
 // Conexión a la base de datos
 connectToDatabase();

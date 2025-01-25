@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../utils/api";
+import { sanitizeInput } from "../utils/sanitization";
 
 const Login = () => {
   const { login } = useAuth();
@@ -13,9 +14,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Sanitiza solo el nombre de usuario, no la contraseña
+    const sanitizedUsername = sanitizeInput(username);
+    const sanitizedPassword = password; // No sanitizar la contraseña
+
     try {
       // Llama a la función de login desde la API
-      const { accessToken, refreshToken, user } = await loginUser(username, password);
+      const { accessToken, refreshToken, user } = await loginUser(sanitizedUsername, sanitizedPassword);
 
       // Almacena los tokens en localStorage
       localStorage.setItem("accessToken", accessToken);
