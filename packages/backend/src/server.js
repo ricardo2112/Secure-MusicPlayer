@@ -6,6 +6,7 @@ import routes from "./routes/index.js";
 import sanitizeMiddleware from "./middleware/sanitizeMiddleware.js";
 import helmet from "helmet";
 import compression from "compression";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 
@@ -21,6 +22,15 @@ const cspDirectives = {
   formAction: ["'self'"],
   upgradeInsecureRequests: [], 
 };
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 150, 
+  message: "Too many requests, please try again after 15 minutes.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(globalLimiter);
 
 app.disable("x-powered-by");
 
