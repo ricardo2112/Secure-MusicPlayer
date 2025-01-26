@@ -24,8 +24,8 @@ const cspDirectives = {
 };
 
 const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 150, 
+  windowMs: 1 * 60 * 1000, 
+  max: 1500, 
   message: "Too many requests, please try again after 15 minutes.",
   standardHeaders: true,
   legacyHeaders: false,
