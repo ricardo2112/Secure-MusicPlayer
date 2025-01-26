@@ -4,7 +4,9 @@ import DOMPurify from "dompurify"; // Importar DOMPurify
 import { useChat } from "../context/ChatContext";
 import { useAuth } from "../context/AuthContext";
 
-const socket = io("http://localhost:3000");
+const socket = io(import.meta.env.VITE_API_BASE_URL, {
+  transports: ["websocket", "polling"],
+});
 
 const Community = () => {
   const [message, setMessage] = useState("");

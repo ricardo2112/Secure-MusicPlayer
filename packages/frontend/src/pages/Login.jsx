@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../utils/api";
+import { sanitizeInput } from "../utils/sanitization";
 
 const Login = () => {
   const { login } = useAuth();
@@ -13,13 +14,27 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Sanitiza solo el nombre de usuario, no la contraseña
+    const sanitizedUsername = sanitizeInput(username);
+    const sanitizedPassword = password; // No sanitizar la contraseña
+
     try {
-      const { accessToken, refreshToken, user } = await loginUser(username, password);
+      // Llama a la función de login desde la API
+      const { accessToken, refreshToken, user } = await loginUser(sanitizedUsername, sanitizedPassword);
+
+      // Almacena los tokens en localStorage
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      // Actualiza el estado de autenticación en el contexto
       await login(accessToken, refreshToken, user);
+
+      // Navega al inicio después de un breve retraso
       setTimeout(() => {
         navigate("/");
       }, 1000);
     } catch (err) {
+      // Muestra errores en caso de fallo
       setError(err.message);
     }
   };

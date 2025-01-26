@@ -3,13 +3,16 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../model/user.js";
 import { validateRegister, validateLogin } from "../utils/validations.js";
+import { sanitizeInput } from "../utils/sanitization.js";
 
 dotenv.config();
 const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY;
+const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
 
 // Login
 export const login = async (req, res) => {
-  const { username, password } = req.body;
+  const username = sanitizeInput(req.body.username);  // Sanitiza solo el username
+  const password = sanitizeInput(req.body.password);  // Sanitiza solo el password
 
   try {
     validateLogin({ username, password });
@@ -26,10 +29,26 @@ export const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.cookie("token", accessToken, { httpOnly: true, maxAge: 3600000 });
+    const refreshToken = jwt.sign(
+      { userId: user._id, username: user.user },
+      REFRESH_TOKEN_KEY,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
     res.status(200).json({
       message: "Login successful",
       accessToken,
+      refreshToken,
       user: { id: user._id, username: user.user },
     });
   } catch (error) {
@@ -38,9 +57,9 @@ export const login = async (req, res) => {
   }
 };
 
-// Register
 export const register = async (req, res) => {
-  const { username, password } = req.body;
+  const username = sanitizeInput(req.body.username);  // Sanitiza solo el username
+  const password = sanitizeInput(req.body.password);  // Sanitiza solo el password
 
   try {
     validateRegister({ username, password });
@@ -60,6 +79,8 @@ export const register = async (req, res) => {
   }
 };
 
+
+
 // Verify Token
 export const verifyToken = async (req, res) => {
   try {
@@ -77,5 +98,34 @@ export const verifyToken = async (req, res) => {
   } catch (error) {
     console.error("Error verifying token:", error.message);
     res.status(401).json({ error: "Invalid or expired token" });
+  }
+};
+
+// Refresh Access Token
+export const refreshAccessToken = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ error: "Refresh token not provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_KEY);
+    const user = await User.findById(decoded.userId);
+
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(403).json({ error: "Invalid refresh token" });
+    }
+
+    const newAccessToken = jwt.sign(
+      { userId: user._id, username: user.user },
+      SECRET_JWT_KEY,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    console.error("Error refreshing access token:", error.message);
+    res.status(403).json({ error: "Invalid or expired refresh token" });
   }
 };

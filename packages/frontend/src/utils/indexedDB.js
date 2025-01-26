@@ -11,18 +11,17 @@ export const openDatabase = async () => {
 };
 
 export const storeTokens = async (accessToken, refreshToken) => {
-  console.log("Tokens antes de almacenar:", { accessToken, refreshToken });
   const createdAt = new Date().getTime();
   const tokens = { id: 1, accessToken, refreshToken, createdAt };
   const db = await openDatabase();
-  console.log("Guardando tokens en IndexedDB:", tokens); // Log de depuración
+  console.log("Guardando tokens en IndexedDB"); // Log de depuración
   await db.put("tokens", tokens);
 };
 
 export const getTokens = async () => {
   const db = await openDatabase();
   const tokens = await db.get("tokens", 1);
-  console.log("Recuperando tokens de IndexedDB:", tokens); // Log de depuración
+  console.log("Recuperando tokens de IndexedDB"); // Log de depuración
   if (!tokens) {
     console.warn("No se encontraron tokens en IndexedDB.");
   }
