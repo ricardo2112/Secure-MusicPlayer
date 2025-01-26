@@ -4,21 +4,65 @@ import cookieParser from "cookie-parser";
 import connectToDatabase from "./config/mongodb.js";
 import routes from "./routes/index.js";
 import sanitizeMiddleware from "./middleware/sanitizeMiddleware.js";
+import helmet from "helmet";
+import compression from "compression";
 
 const app = express();
-app.use(express.json()); // Sólo una vez está bien
-app.use(sanitizeMiddleware); // Aplicar middleware global
+
+const cspDirectives = {
+  defaultSrc: ["'self'"], 
+  scriptSrc: ["'self'", "https://trustedscripts.example.com"], 
+  styleSrc: ["'self'", "https://trustedstyles.example.com"], 
+  imgSrc: ["'self'", "data:", "https://trustedimages.example.com"],
+  connectSrc: ["'self'", "https://api.example.com"], 
+  fontSrc: ["'self'", "https://fonts.gstatic.com"],
+  objectSrc: ["'none'"], 
+  frameAncestors: ["'none'"],
+  upgradeInsecureRequests: [], 
+};
+
+app.disable("x-powered-by");
+
+app.use(helmet());
+app.use(helmet.frameguard({ action: "deny" }));
+app.use(
+  helmet.hsts({
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  })
+);
+app.use(helmet.noSniff());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: cspDirectives,
+  })
+);
+
+app.use(
+  compression({
+    filter: (req, res) => {
+      if (req.path.includes("/auth") || req.path.includes("/login")) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+  })
+);
+
+app.use(express.json());
+app.use(sanitizeMiddleware);
 
 // Configurar CORS dinámico
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*", // Permitir solicitudes desde el frontend
-    credentials: true, // Permitir cookies
+    origin: process.env.CLIENT_URL || "*", 
+    credentials: true, 
   })
 );
 
 // Middlewares globales
-app.use(cookieParser()); // Sólo esta línea
+app.use(cookieParser()); 
 
 // Conexión a la base de datos
 connectToDatabase();
