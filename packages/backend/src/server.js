@@ -51,7 +51,15 @@ app.use(
   })
 );
 
-app.use(express.json());
+// Middleware para manejar JSON, excluye métodos GET
+app.use((req, res, next) => {
+  if (req.method === "GET") return next(); // Salta express.json() para solicitudes GET
+  express.json()(req, res, next); // Procesa JSON para otros métodos
+});
+
+// Usar rutas
+app.use(routes);
+
 app.use(sanitizeMiddleware);
 
 // Configurar CORS dinámico
