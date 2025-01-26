@@ -11,11 +11,11 @@ const app = express();
 
 const cspDirectives = {
   defaultSrc: ["'self'"], 
-  scriptSrc: ["'self'", "https://trustedscripts.example.com"], 
-  styleSrc: ["'self'", "https://trustedstyles.example.com"], 
-  imgSrc: ["'self'", "data:", "https://trustedimages.example.com"],
-  connectSrc: ["'self'", "https://api.example.com"], 
-  fontSrc: ["'self'", "https://fonts.gstatic.com"],
+  scriptSrc: ["'self'"], 
+  styleSrc: ["'self'"], 
+  imgSrc: ["'self'", "data:", "https"],
+  connectSrc: ["'self'"], 
+  fontSrc: ["'self'"],
   objectSrc: ["'none'"], 
   frameAncestors: ["'none'"],
   upgradeInsecureRequests: [], 
@@ -56,7 +56,7 @@ app.use(sanitizeMiddleware);
 // Configurar CORS dinámico
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*", 
+    origin: process.env.CLIENT_URL, 
     credentials: true, 
   })
 );
