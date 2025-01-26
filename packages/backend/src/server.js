@@ -18,6 +18,7 @@ const cspDirectives = {
   fontSrc: ["'self'"],
   objectSrc: ["'none'"], 
   frameAncestors: ["'none'"],
+  formAction: ["'self'"],
   upgradeInsecureRequests: [], 
 };
 
@@ -77,5 +78,23 @@ app.use((err, req, res, next) => {
     error: err.message || "Internal Server Error",
   });
 });
+
+// Para contenido dinámico o sensible
+app.use((req, res, next) => {
+  if (req.path.includes("/auth") || req.path.includes("/login")) {
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+  }
+  next();
+});
+
+// Para contenido estático
+app.use(express.static("public", {
+  setHeaders: (res, path) => {
+    res.set("Cache-Control", "public, max-age=31536000, immutable");
+  },
+}));
+
 
 export default app;
