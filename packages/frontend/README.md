@@ -1,4 +1,4 @@
-# Frontend de Reproductor de música 🎵
+# Frontend de Music Player 🎵
 
 Este proyecto constituye el frontend de una aplicación web de música desarrollada con React, Vite y Tailwind CSS. Incluye funcionalidades como listas de reproducción, canciones favoritas, suscripciones, chat en tiempo real entre usuarios y más.
 
