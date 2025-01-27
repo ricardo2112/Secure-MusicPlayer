@@ -11,17 +11,21 @@ const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
 
 // Login
 export const login = async (req, res) => {
-  const username = sanitizeInput(req.body.username);  // Sanitiza solo el username
-  const password = sanitizeInput(req.body.password);  // Sanitiza solo el password
+  const username = sanitizeInput(req.body.username);
+  const password = sanitizeInput(req.body.password);
 
   try {
     validateLogin({ username, password });
 
     const user = await User.findOne({ user: username });
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" }); // Envía una única respuesta
+    }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return res.status(401).json({ error: "Invalid credentials" });
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid credentials" }); // Otra respuesta controlada
+    }
 
     const accessToken = jwt.sign(
       { userId: user._id, username: user.user },
@@ -45,7 +49,7 @@ export const login = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Login successful",
       accessToken,
       refreshToken,
@@ -53,9 +57,10 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in /login:", error.message);
-    res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message }); // Asegúrate de tener un único punto de respuesta
   }
 };
+
 
 export const register = async (req, res) => {
   const username = sanitizeInput(req.body.username);  // Sanitiza solo el username

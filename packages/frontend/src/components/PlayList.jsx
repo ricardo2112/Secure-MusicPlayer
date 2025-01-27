@@ -1,96 +1,119 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePlaylists } from "../context/PlaylistsContext";
-import PlaylistModal from "./PlaylistModal";
-import PlaylistDetail from "./PlaylistDetail";
+import SongSearchModal from "./SongSearchModal"; // Nuevo componente para buscar canciones
 
 const Playlists = ({ onPlaySong }) => {
   const {
     playlists,
+    fetchPlaylists,
     addPlaylist,
-    updatePlaylist,
     removePlaylist,
-    loadSongsForPlaylist,
+    addSong,
   } = usePlaylists();
+
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const [viewPlaylist, setViewPlaylist] = useState(null);
   const [playlistSongs, setPlaylistSongs] = useState([]);
+  const [isAddingSongs, setIsAddingSongs] = useState(false); // Modal para añadir canciones
+  const [newPlaylistName, setNewPlaylistName] = useState(""); // Nombre de la nueva playlist
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddPlaylist = () => {
-    const newPlaylist = {
-      id: playlists.length + 1,
-      title: `Nueva Playlist ${playlists.length + 1}`,
-      description: "",
-      cover: "",
-      songs: [],
+  useEffect(() => {
+    const loadPlaylists = async () => {
+      try {
+        setIsLoading(true);
+        await fetchPlaylists();
+      } catch (error) {
+        console.error("Error al cargar playlists:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    addPlaylist(newPlaylist);
-  };
+    loadPlaylists(); // Cargar las playlists al montar el componente
+  }, []);
 
-  const handleEditPlaylist = (playlist) => {
-    setSelectedPlaylist(playlist);
-  };
+  const handleAddPlaylist = async () => {
+    if (!newPlaylistName.trim()) {
+      alert("Por favor, ingresa un nombre para la playlist.");
+      return;
+    }
 
-  const handleViewPlaylist = async (playlist) => {
     try {
-      setIsLoading(true); // Mostrar estado de carga
-      const songs = await loadSongsForPlaylist(playlist.id); // Llamar a la API
-      setPlaylistSongs(songs); // Establecer canciones en el estado
-      setViewPlaylist(playlist); // Establecer playlist activa
+      await addPlaylist(newPlaylistName);
+      setNewPlaylistName(""); // Limpiar el campo de nombre
     } catch (error) {
-      console.error("Error al cargar canciones para la playlist:", error);
-      setPlaylistSongs([]); // En caso de error, limpiar canciones
-    } finally {
-      setIsLoading(false); // Ocultar estado de carga
+      console.error("Error al agregar playlist:", error);
     }
   };
 
-  const handleDeletePlaylist = (id) => {
-    removePlaylist(id);
+  const handleViewPlaylist = (playlist) => {
+    setPlaylistSongs(playlist.songs || []);
+    setViewPlaylist(playlist);
   };
 
-  const handleRemoveSong = (songId) => {
-    setPlaylistSongs((prevSongs) =>
-      prevSongs.filter((song) => song.id !== songId)
-    );
+  const handleDeletePlaylist = async (id) => {
+    try {
+      await removePlaylist(id);
+    } catch (error) {
+      console.error("Error al eliminar la playlist:", error);
+    }
   };
 
-  const handleSavePlaylist = (updatedPlaylist) => {
-    updatePlaylist(updatedPlaylist);
-    setSelectedPlaylist(null);
+  const handleAddSongToPlaylist = async (playlistId, songId) => {
+    try {
+      await addSong(playlistId, songId);
+    } catch (error) {
+      console.error("Error al añadir canción:", error);
+    }
   };
 
   if (isLoading) {
-    return <div className="text-white">Loading songs...</div>;
+    return <div className="text-white">Cargando playlists...</div>;
   }
 
   if (viewPlaylist) {
     return (
-      <PlaylistDetail
-        playlist={viewPlaylist}
-        songs={playlistSongs}
-        onClose={() => setViewPlaylist(null)}
-        onPlaySong={onPlaySong}
-        onRemoveSong={handleRemoveSong}
-      />
+      <div className="text-white">
+        <h3 className="text-lg">Canciones en {viewPlaylist.name}</h3>
+        <ul>
+          {playlistSongs.map((song, index) => (
+            <li key={index}>{song}</li>
+          ))}
+        </ul>
+        <button
+          onClick={() => setViewPlaylist(null)}
+          className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+        >
+          Cerrar
+        </button>
+      </div>
     );
   }
 
   return (
     <div className="p-4">
-      <h2 className="text-white text-2xl mb-4">Your Playlist</h2>
-      <div className="grid grid-cols-3 gap-4">
-        <div
-          onClick={handleAddPlaylist}
-          className="border-2 border-dashed flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-700 rounded-lg"
-        >
-          <span className="text-xl">+</span>
-          <span>New Playlist</span>
-        </div>
+      <h2 className="text-white text-2xl mb-4">Tus Playlists</h2>
 
+      <div className="flex items-center mb-4">
+        <input
+          type="text"
+          placeholder="Nombre de la playlist"
+          value={newPlaylistName}
+          onChange={(e) => setNewPlaylistName(e.target.value)}
+          className="mr-2 p-2 rounded bg-gray-800 text-white border border-gray-600"
+        />
+        <button
+          onClick={handleAddPlaylist}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Crear Playlist
+        </button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
         {playlists.map((playlist) => (
           <div
-            key={playlist.id}
+            key={playlist._id || playlist.id} // Asegúrate de que la clave es única
             className="relative border rounded-lg p-4 cursor-pointer bg-gray-800 hover:bg-gray-700"
             onClick={() => handleViewPlaylist(playlist)}
           >
@@ -98,42 +121,33 @@ const Playlists = ({ onPlaySong }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleEditPlaylist(playlist);
+                  setIsAddingSongs(true);
+                  setSelectedPlaylist(playlist);
                 }}
-                className="bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600"
+                className="bg-green-500 text-white p-1 rounded-full hover:bg-green-600"
               >
-                ✏️
+                ➕
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDeletePlaylist(playlist.id);
+                  handleDeletePlaylist(playlist._id || playlist.id);
                 }}
                 className="bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
               >
                 🗑️
               </button>
             </div>
-            <div className="h-32 w-full bg-gray-600 rounded-md mb-2">
-              {playlist.cover && (
-                <img
-                  src={playlist.cover}
-                  alt={playlist.title}
-                  className="w-full h-full object-cover rounded-md"
-                />
-              )}
-            </div>
-            <h3 className="text-white text-lg">{playlist.title}</h3>
-            <p className="text-gray-400 text-sm">{playlist.description}</p>
+            <h3 className="text-white text-lg">{playlist.name}</h3>
           </div>
         ))}
       </div>
 
-      {selectedPlaylist && (
-        <PlaylistModal
+      {isAddingSongs && selectedPlaylist && (
+        <SongSearchModal
           playlist={selectedPlaylist}
-          onSave={handleSavePlaylist}
-          onClose={() => setSelectedPlaylist(null)}
+          onAddSong={(songId) => handleAddSongToPlaylist(selectedPlaylist._id, songId)}
+          onClose={() => setIsAddingSongs(false)}
         />
       )}
     </div>

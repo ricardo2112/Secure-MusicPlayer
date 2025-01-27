@@ -1,23 +1,21 @@
 import express from "express";
 import {
-  handleCreatePlaylist,
-  handleAddSongToPlaylist,
-  handleRemoveSongFromPlaylist,
-  handleDeletePlaylist,
+  createPlaylist,
+  getPlaylists,
+  updatePlaylist,
+  deletePlaylist,
+  addSongToPlaylist,
+  removeSongFromPlaylist,
 } from "../controllers/playlistController.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Crear una playlist
-router.post("/playlists", handleCreatePlaylist);
-
-// Añadir una canción a una playlist
-router.post("/playlists/songs", handleAddSongToPlaylist);
-
-// Quitar una canción de una playlist
-router.delete("/playlists/songs", handleRemoveSongFromPlaylist);
-
-// Eliminar una playlist
-router.delete("/playlists", handleDeletePlaylist);
+router.post("/", verifyToken, createPlaylist);
+router.get("/", verifyToken, getPlaylists);
+router.put("/", verifyToken, updatePlaylist);
+router.delete("/:playlistId", verifyToken, deletePlaylist);
+router.post("/add-song", verifyToken, addSongToPlaylist);
+router.post("/remove-song", verifyToken, removeSongFromPlaylist);
 
 export default router;
