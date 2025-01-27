@@ -72,12 +72,23 @@ app.use(sanitizeMiddleware);
 // Configurar CORS dinámico
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // Permitir localhost del frontend
-    credentials: true, // Permitir el uso de cookies
-    methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
-    allowedHeaders: ["Content-Type", "Authorization"], // Headers permitidos 
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "http://localhost:5173", // Origen local del frontend
+        "http://localhost:3000", // Origen local del backend
+        "https://secure-music-player.netlify.app", // Frontend en producción
+        "https://secure-musicplayer.onrender.com", // Backend en producción
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
+
 
 // Middlewares globales
 app.use(cookieParser()); 
