@@ -67,27 +67,33 @@ app.use((req, res, next) => {
   express.json()(req, res, next); // Procesa JSON para otros métodos
 });
 
-// Usar rutas
-app.use(routes);
-
 app.use(sanitizeMiddleware);
 
 // Configurar CORS dinámico
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, 
-    credentials: true, 
+    origin: (origin, callback) => {
+      const allowedOrigins = process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(",")
+        : ["http://localhost:5173", "http://localhost:3000"]; // Por defecto, para desarrollo local.
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true); // Permitir acceso.
+      } else {
+        callback(new Error("Not allowed by CORS")); // Rechazar acceso.
+      }
+    },
+    credentials: true, // Permite cookies y credenciales.
   })
 );
+
+
 
 // Middlewares globales
 app.use(cookieParser()); 
 
 // Conexión a la base de datos
 connectToDatabase();
-
-// Usar rutas
-app.use(routes);
 
 // Middleware para manejar errores
 app.use((err, req, res, next) => {
@@ -114,5 +120,7 @@ app.use(express.static("public", {
   },
 }));
 
+// Usar rutas
+app.use(routes);
 
 export default app;

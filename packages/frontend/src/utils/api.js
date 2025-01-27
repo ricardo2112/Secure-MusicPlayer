@@ -6,23 +6,23 @@ export const loginUser = async (username, password) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
+    credentials: "include", // Incluye cookies en la solicitud
   });
 
   if (!response.ok) {
     throw new Error("Credenciales incorrectas");
   }
 
-  //return await response.json(); // Devuelve tokens y datos de usuario
   const data = await response.json(); // Procesa el JSON
   return data; // Devuelve los datos para el contexto
 };
-
 
 export const registerUser = async (username, password) => {
   const response = await fetch(`${API_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
+    credentials: "include", // Incluye cookies en la solicitud
   });
 
   if (!response.ok) {
