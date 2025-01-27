@@ -48,14 +48,41 @@ export const getActiveSubscription = async (req, res) => {
       return res.status(404).json({ error: "No hay suscripción activa" });
     }
 
+    // Buscar una suscripción activa dentro del array
     const activeSubscription = user.subscriptions.find((sub) => sub.status === "ACTIVE");
+
     if (!activeSubscription) {
       return res.status(404).json({ error: "No hay suscripción activa" });
     }
 
     res.status(200).json({ subscription: activeSubscription });
   } catch (error) {
-    console.error("Error al obtener la suscripción:", error.message);
-    res.status(500).json({ error: "Error al obtener la suscripción" });
+    console.error("Error al obtener la suscripción activa:", error.message);
+    res.status(500).json({ error: "Error al obtener la suscripción activa" });
+  }
+};
+
+// Cancelar suscripción
+export const cancelSubscription = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado." });
+    }
+
+    const activeSubscription = user.subscriptions.find((sub) => sub.status === "ACTIVE");
+    if (!activeSubscription) {
+      return res.status(400).json({ error: "No tienes una suscripción activa." });
+    }
+
+    activeSubscription.status = "CANCELLED";
+    await user.save();
+
+    res.status(200).json({ message: "Suscripción cancelada con éxito" });
+  } catch (error) {
+    console.error("Error al cancelar la suscripción:", error.message);
+    res.status(500).json({ error: "Error al cancelar la suscripción." });
   }
 };
