@@ -67,16 +67,15 @@ app.use((req, res, next) => {
   express.json()(req, res, next); // Procesa JSON para otros métodos
 });
 
-// Usar rutas
-app.use(routes);
-
 app.use(sanitizeMiddleware);
 
 // Configurar CORS dinámico
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, 
-    credentials: true, 
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // Permitir localhost del frontend
+    credentials: true, // Permitir el uso de cookies
+    methods: ["GET", "POST", "PUT", "DELETE"], // Métodos permitidos
+    allowedHeaders: ["Content-Type", "Authorization"], // Headers permitidos 
   })
 );
 
@@ -85,9 +84,6 @@ app.use(cookieParser());
 
 // Conexión a la base de datos
 connectToDatabase();
-
-// Usar rutas
-app.use(routes);
 
 // Middleware para manejar errores
 app.use((err, req, res, next) => {
@@ -114,5 +110,7 @@ app.use(express.static("public", {
   },
 }));
 
+// Usar rutas
+app.use(routes);
 
 export default app;
