@@ -1,4 +1,4 @@
-# Backend de Reproductor de música 🎵
+# Backend de Music Player 🎵
 
 Este proyecto constituye el backend de la aplicación web de música, desarrollado con Node.js, Express y MongoDB. Ofrece funcionalidades como autenticación de usuarios, gestión de listas de reproducción, suscripciones, un servicio de chat en tiempo real y sanitización de entradas para mejorar la seguridad.
 
