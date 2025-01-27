@@ -29,7 +29,6 @@ function App() {
     <AuthProvider>
       <ChatProvider>
         <PlaylistsProvider>
-          {/* Configuración del SDK de PayPal con variable .env */}
           <PayPalScriptProvider
             options={{
               "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID, // Usamos la variable de entorno

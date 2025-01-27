@@ -14,20 +14,6 @@ const Header = () => {
       >
         <IoIosArrowBack className='size-8' />
       </button>
-      
-      <div className="flex-1 mx-4">
-        <div className="relative w-3/5 mx-auto">
-          <input
-            type="text"
-            className="relative w-full px-4 py-2 bg-secondary text-white rounded-full focus:outline-none text-sm"
-            placeholder="Buscar..."
-          />
-          <CiSearch className="absolute right-4 top-1.5 text-white size-6" />
-        </div>
-      </div>
-      <button className="text-white ml-auto">
-        <PiUser className='size-8' />
-      </button>
     </div>
   );
 };
